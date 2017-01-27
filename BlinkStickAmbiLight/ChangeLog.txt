@@ -1,0 +1,18 @@
+﻿BlinkStick AmbiLight (BSAL) ChangeLog
+--------------------------------------
+# = Change; ! = Fix
+
+Version 1.0.3
+- ! Fixed an AccessViolation that could occur with some screen resolutions.
+- ! Fixed the "screen double" bug (reported by user Doffi)
+- ! Fixed a possible memory leak.
+- # Reduced stuttering of BSAL when screen preview is off.
+- # Minor tweaks.
+
+Version 1.0.2
+- # Added brightness control for the device. 
+- # Added static color mode. 
+- # Added Ambilight screen mode. This mode sends the average color of the whole screen to all LEDs.
+- # Now BSAL can be started only once.
+- # Improved region handling (especially if one or more sides of the screen are not equipped with LEDs). 
+- # Improved CPU usage
