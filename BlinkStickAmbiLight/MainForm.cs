@@ -261,8 +261,10 @@ namespace BlinkStickAmbiLight
         /// <param name="rect">Part of the bitmap</param>
 		public Color GetAverageColor(Bitmap bmp_source, Rectangle rect)
 		{
-			bmp_source = CropImage(bmp_source, rect);
-			return GetAverageColor(bmp_source);
+			Bitmap regionBitmap = CropImage(bmp_source, rect);
+            Color color = GetAverageColor(regionBitmap);
+            regionBitmap.Dispose();        
+            return color;
 		}
 
 		/// <summary>
@@ -313,12 +315,23 @@ namespace BlinkStickAmbiLight
 //			sw.Start();
         	if (glob.Lighttype != globalsettings.LightTypes.Static)
         	{
-        		DXScreen = GetImage(GetScreenRect());
+                if (DXScreen!=null)
+                {
+                    DXScreen.Dispose();
+                }
+                
+                DXScreen = GetImage(GetScreenRect());
         		SetColors();
         	}
         	if (cbPreview.Checked)
         	{
-        		DXScreen = GetImage(GetScreenRect());
+
+                if (DXScreen != null)
+                {
+                    DXScreen.Dispose();
+                }
+
+                DXScreen = GetImage(GetScreenRect());
         		SetColors();
         		pbPreview.Image = DXScreen;
         	}

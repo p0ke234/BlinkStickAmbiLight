@@ -41,7 +41,6 @@ namespace BlinkStickAmbiLight
 		static Device d;
 		static Surface s;
 		static Bitmap DXScreen;
-		static Bitmap bm;
 		
 		private void DXInit()
 		{
@@ -82,13 +81,11 @@ namespace BlinkStickAmbiLight
         			
         			d.GetFrontBufferData(0, s);
         			DataRectangle gsx = s.LockRectangle(rect, LockFlags.None);
-        			using (bm = new Bitmap(rect.Width, rect.Height, CalculateStride(rect.Width, PixelFormat.Format32bppPArgb), PixelFormat.Format32bppPArgb, gsx.Data.DataPointer))
-        			{
-        				bm = (Bitmap)bm.GetThumbnailImage(pbPreview.Width = (Screen.AllScreens[iScreen].Bounds.Width) / preview_factor,
-        				                                  pbPreview.Height = Screen.AllScreens[iScreen].Bounds.Height / preview_factor ,null, IntPtr.Zero);
-        				s.UnlockRectangle();
-        				return bm;
-        			}
+                    Bitmap bm = new Bitmap(rect.Width, rect.Height, CalculateStride(rect.Width, PixelFormat.Format32bppPArgb), PixelFormat.Format32bppPArgb, gsx.Data.DataPointer);
+                    Bitmap thumbnail = (Bitmap)bm.GetThumbnailImage(pbPreview.Width = (Screen.AllScreens[iScreen].Bounds.Width) / preview_factor, pbPreview.Height = Screen.AllScreens[iScreen].Bounds.Height / preview_factor ,null, IntPtr.Zero);
+                    bm.Dispose();
+        			s.UnlockRectangle();
+        			return thumbnail;
         		}
         	}
         	catch (Exception ex)
