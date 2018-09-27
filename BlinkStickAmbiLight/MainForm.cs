@@ -52,6 +52,11 @@ namespace BlinkStickAmbiLight
 		{
 			log4net.Config.XmlConfigurator.Configure();
 			log.Info("Starting BlinkStick Ambilight v." + Application.ProductVersion);
+			foreach(var screen in Screen.AllScreens)
+			{
+				log.Debug("Screen (" + screen.DeviceName + ") Resolution: " + screen.WorkingArea.Width.ToString() + " / "
+				          + screen.WorkingArea.Height.ToString());
+			}
 			try
 			{
 				DXInit();
@@ -71,7 +76,7 @@ namespace BlinkStickAmbiLight
 			pbPreview.Width = Screen.AllScreens[iScreen].Bounds.Width / preview_factor;
 			pbPreview.Height = Screen.AllScreens[iScreen].Bounds.Height / preview_factor;
 			pbPreview.SizeMode = PictureBoxSizeMode.StretchImage;
-
+			
 			ScreenRect = new Rectangle(0,0, Screen.AllScreens[iScreen].Bounds.Width / preview_factor,
 			                            Screen.AllScreens[iScreen].Bounds.Height / preview_factor);		
 			

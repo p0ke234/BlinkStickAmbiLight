@@ -44,44 +44,59 @@ namespace BlinkStickAmbiLight
 		static Bitmap bm;
 		
 		private void DXInit()
-		{						
-			var present_params = new PresentParameters();
-            present_params.Windowed = true;
-            present_params.SwapEffect = SwapEffect.Discard;
-            present_params.BackBufferCount = 1;
+		{
+			try
+			{
+				var present_params = new PresentParameters();
+				present_params.Windowed = true;
+				present_params.SwapEffect = SwapEffect.Discard;
+				present_params.BackBufferCount = 1;
 
-            present_params.PresentationInterval = PresentInterval.Immediate;
-            
-            present_params.BackBufferHeight = Screen.AllScreens[iScreen].WorkingArea.Height;
-            present_params.BackBufferWidth = Screen.AllScreens[iScreen].WorkingArea.Width;
-
-            d = new Device(new Direct3D(), 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.HardwareVertexProcessing, present_params);
+				present_params.PresentationInterval = PresentInterval.Immediate;
+				
+				present_params.BackBufferHeight = Screen.AllScreens[iScreen].WorkingArea.Height;
+				present_params.BackBufferWidth = Screen.AllScreens[iScreen].WorkingArea.Width;
+				
+				d = new Device(new Direct3D(), 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.HardwareVertexProcessing, present_params);
+			}
+			catch (Exception ex)
+			{
+				log.Debug("[Init DirectX] - " + ex.Message);
+			}
 		}
 		
 		/// <summary>
         /// Get DX screen image
         /// </summary>
         /// <param name="rect">Screen rectangle</param>
-		public Bitmap GetImage(Rectangle rect)
-		{
-			lock (lockobj)
-			{
-				if (s == null)
-				{
-					s = Surface.CreateOffscreenPlain(d, rect.Width, rect.Height, Format.A8R8G8B8, Pool.Scratch);
-				}
-				
-				d.GetFrontBufferData(0, s);
-				DataRectangle gsx = s.LockRectangle(rect, LockFlags.None);
-				using (bm = new Bitmap(rect.Width, rect.Height, CalculateStride(rect.Width, PixelFormat.Format32bppPArgb), PixelFormat.Format32bppPArgb, gsx.Data.DataPointer))
-				{
-					bm = (Bitmap)bm.GetThumbnailImage(pbPreview.Width = (Screen.AllScreens[iScreen].Bounds.Width) / preview_factor,
-					                                  pbPreview.Height = Screen.AllScreens[iScreen].Bounds.Height / preview_factor ,null, IntPtr.Zero);
-					s.UnlockRectangle();
-					return bm;
-				}
-			}
-		}
+        public Bitmap GetImage(Rectangle rect)
+        {
+        	try
+        	{
+        		lock (lockobj)
+        		{
+        			if (s == null)
+        			{
+        				s = Surface.CreateOffscreenPlain(d, rect.Width, rect.Height, Format.A8R8G8B8, Pool.Scratch);
+        			}
+        			
+        			d.GetFrontBufferData(0, s);
+        			DataRectangle gsx = s.LockRectangle(rect, LockFlags.None);
+        			using (bm = new Bitmap(rect.Width, rect.Height, CalculateStride(rect.Width, PixelFormat.Format32bppPArgb), PixelFormat.Format32bppPArgb, gsx.Data.DataPointer))
+        			{
+        				bm = (Bitmap)bm.GetThumbnailImage(pbPreview.Width = (Screen.AllScreens[iScreen].Bounds.Width) / preview_factor,
+        				                                  pbPreview.Height = Screen.AllScreens[iScreen].Bounds.Height / preview_factor ,null, IntPtr.Zero);
+        				s.UnlockRectangle();
+        				return bm;
+        			}
+        		}
+        	}
+        	catch (Exception ex)
+        	{
+        		log.Debug("[DirectX GetScreenImage] - " + ex.Message);
+        		return null;
+        	}
+        }
 
 		private int CalculateStride(int width, PixelFormat pf)
 		{
